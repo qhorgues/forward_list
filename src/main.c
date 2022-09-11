@@ -5,37 +5,43 @@
 
 int main(void)
 {
-    forward_list_t(const char*) list;
-    forward_list_init(&list);
+    fw_list_str_t list;
+    fw_list_init(&list);
+    fw_list_index_insert(&list, 0, "Salut ca va");
+    fw_list_push_front(&list, "Oui et toi");
+    fw_list_index_insert(&list, 2, "Nickel");
+    fw_list_index_insert(&list, fw_list_size(&list), "cool");
 
-    forward_list_push_front(&list, "Salut ca va");
-    forward_list_push_front(&list, "Oui et toi");
-    forward_list_push_front(&list, "nickel");
-    forward_list_push_front(&list, "cool");
-
-    forward_list_citer_t iter = forward_list_citer(&list);
+    fw_list_citer_t iter = fw_list_citer(&list);
     do
     {
-        printf("%s\n", *forward_list_citer_get(&list, iter));
-    } while (forward_list_next(&iter) != NULL);
+        printf("%s\n", *fw_list_citer_get(&list, iter));
+    } while (fw_list_citer_next(&iter) != NULL);
     
 
-    forward_list_free(&list);
+    fw_list_free(&list);
 
-    forward_list_t(int) list2;
-    forward_list_init(&list2);
+    fw_list_int_t list2;
+    fw_list_init(&list2);
 
-    forward_list_push_front(&list2, 4);
-    forward_list_push_front(&list2, 5);
-    forward_list_push_front(&list2, 25);
-    forward_list_push_front(&list2, 52);
+    fw_list_push_front(&list2, 4);
+    fw_list_push_front(&list2, 5);
+    fw_list_push_front(&list2, 25);
+    fw_list_push_front(&list2, 52);
+    fw_list_set(&list2, 2ull, 64);
 
-    forward_list_citer_t iter2 = forward_list_citer(&list2);
+    fw_list_iter_t iter2 = fw_list_iter(&list2);
     do
     {
-        printf("%d\n", *forward_list_citer_get(&list2, iter2));
-    } while (forward_list_next(&iter2) != NULL);
+        int const* value = fw_list_iter_get(&list2, iter2);
+        if (value != NULL)
+            printf("%d, %p\n", *value, (void*)iter);
+        else
+        {
+            perror("fw_list_iter_get");
+        }
+    } while (fw_list_iter_next(&iter2) != NULL);
 
-    forward_list_free(&list2);
+    fw_list_free(&list2);
     return 0;
 }
