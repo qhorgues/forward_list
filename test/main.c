@@ -1,7 +1,6 @@
 #include <stdio.h>
-#include <string.h>
 #include <errno.h>
-#include "forward_list/forward_list.h"
+#include <forward_list.h>
 
 int main(void)
 {
