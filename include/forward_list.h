@@ -1,6 +1,11 @@
 #ifndef FORWARD_LIST_H
 #define FORWARD_LIST_H
 
+#if defined(__cplusplus)
+extern "C"
+{
+#endif
+
 #define FORWARD_LIST_VERSION "1.0.0"
 
 #include <stddef.h>
@@ -259,4 +264,9 @@ typedef fw_list_t(char*) fw_list_str_t;
 typedef fw_list_t(void*) forward_list_ptr_t;
 typedef fw_list_t(void*) fw_list_ptr_t;
 
+
+#if defined(__cplusplus)
+}
+#endif
+    
 #endif
