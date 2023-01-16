@@ -206,7 +206,7 @@ forward_list_iter_t forward_list_next(forward_list_iter_t iter)
     return iter->next;
 }
 
-void forward_list_merge_(forward_list_base_t* restrict forward_list1, forward_list_base_t* restrict forward_list2)
+void forward_list_splice_after_(forward_list_base_t* restrict forward_list1, forward_list_base_t* restrict forward_list2)
 {
     if (forward_list1->list == NULL)
     {

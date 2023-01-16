@@ -36,7 +36,7 @@ typedef forward_list_node_t const *forward_list_citer_t;
     }
 
 
-/**************** COnstructor / Destructor ******************/
+/**************** Constructor / Destructor ******************/
 
 #define forward_list_init(forward_list)\
     forward_list_init_(&(forward_list).base)
@@ -115,8 +115,8 @@ typedef forward_list_node_t const *forward_list_citer_t;
 
 /********** Operations ***********/
 
-#define forward_list_merge(forward_list_1, forward_list_2) \
-    forward_list_merge_(&(forward_list_1).base, &(forward_list_2).base)
+#define forward_list_splice_after(forward_list_1, forward_list_2) \
+    forward_list_splice_after_(&(forward_list_1).base, &(forward_list_2).base)
 
 int forward_list_init_(forward_list_base_t *const restrict forward_list);
 
@@ -166,7 +166,7 @@ forward_list_citer_t forward_list_cnext(forward_list_citer_t iter);
 
 forward_list_iter_t forward_list_next(forward_list_iter_t iter);
 
-void forward_list_merge_(forward_list_base_t* restrict forward_list1, forward_list_base_t* restrict forward_list2);
+void forward_list_splice_after_(forward_list_base_t* restrict forward_list1, forward_list_base_t* restrict forward_list2);
 
 // Alias fw
 
@@ -216,6 +216,12 @@ typedef forward_list_citer_t fw_list_citer_t;
 #define fw_list_cbegin(forward_list)  \
             forward_list_cbegin(forward_list)
 
+#define fw_list_before_begin(forward_list)  \
+            forward_list_before_begin(forward_list)
+
+#define fw_list_cbefore_begin(forward_list)  \
+            forward_list_cbefore_begin(forward_list)
+
 #define fw_list_end(forward_list)  \
             forward_list_end(forward_list)
 
@@ -229,8 +235,8 @@ typedef forward_list_citer_t fw_list_citer_t;
 #define fw_list_next(iter)  \
             forward_list_next(iter)
 
-#define fw_list_merge(forward_list_1, forward_list_2) \
-    forward_list_merge(forward_list_1, forward_list_2)
+#define fw_list_splice_after(forward_list_1, forward_list_2) \
+    forward_list_splice_after(forward_list_1, forward_list_2)
 
 
 // default type
