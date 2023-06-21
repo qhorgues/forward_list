@@ -2,74 +2,75 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <forward_list.h>
-#include <stdint.h>
-
 
 int main(void)
 {
-    printf("list1\n\n");
-  
-    fw_list_int_t list;
-    fw_list_init(&list);
-    fw_list_push_front(&list, 12);
-    fw_list_push_front(&list, 24);
+    printf("\n list 1 \n\n");
 
-    for (fw_list_citer_t iter = fw_list_cbegin(&list); iter != fw_list_cend(); iter = fw_list_cnext(iter))
+    fw_list_int_t list1;
+    fw_list_init(list1);
+    fw_list_push_front(list1, 12);
+    fw_list_push_front(list1, 24);
+
+    for (fw_list_citer_t iter = fw_list_cbegin(list1); iter != fw_list_cend(); iter = fw_list_cnext(iter))
     {
-        int const* value = fw_list_cget(&list, iter); 
+        int const* value = fw_list_cget(list1, iter); 
         printf("%d, %p\n", *value, (void const*)value);
     }
 
-    printf("\nlist2\n\n");
+    printf("\n list 2 \n\n");
 
     fw_list_int_t list2;
-    fw_list_init(&list2);
+    fw_list_init(list2);
 
-    fw_list_push_front(&list2, 4);
-    fw_list_push_front(&list2, 5);
-    fw_list_insert_after(&list2, fw_list_begin(&list2), 18);
-    fw_list_erase_after(&list2, forward_list_before_begin(&list2));
-    fw_list_pop_front(&list2);
-    fw_list_push_front(&list2, 25);
-    fw_list_push_front(&list2, 52);
+    fw_list_push_front(list2, 4);
+    fw_list_push_front(list2, 5);
+    fw_list_insert_after(list2, fw_list_begin(list2), 18);
+    fw_list_erase_after(list2, forward_list_before_begin(list2));
+    fw_list_pop_front(list2);
+    fw_list_push_front(list2, 25);
+    fw_list_push_front(list2, 52);
 
-    for (fw_list_citer_t iter2 = fw_list_cbegin(&list2); iter2 != fw_list_cend(); iter2 = fw_list_cnext(iter2))
+    for (fw_list_citer_t iter2 = fw_list_cbegin(list2); iter2 != fw_list_cend(); iter2 = fw_list_cnext(iter2))
     {
-        int const* value = fw_list_cget(&list2, iter2);
-        printf("%d, %p\n", *value, (void const*)iter2);
+        int const* value = fw_list_cget(list2, iter2);
+        printf("%d, %p\n", *value, (void const*)value);
         
     }
 
-    printf("\n\nMerge\n\n");
-    fw_list_merge(&list, &list2); 
-    for (fw_list_citer_t iter = fw_list_cbegin(&list); iter != fw_list_cend(); iter = fw_list_cnext(iter))
+    printf("\n list 1 + 2 \n\n");
+
+    fw_list_splice_after(list1, list2);
+    for (fw_list_citer_t iter = fw_list_cbegin(list1); iter != fw_list_cend(); iter = fw_list_cnext(iter))
     {
-        int const* value = fw_list_cget(&list, iter); 
+        int const* value = fw_list_cget(list1, iter); 
         printf("%d, %p\n", *value, (void const*)value);
     }
-    fw_list_free(&list);
 
-    printf("\n\nList float\n\n");
-    
-    fw_list_float_t list_float;
-    fw_list_init(&list_float);
-    fw_list_push_front(&list_float, 12.2f);
-    fw_list_push_front(&list_float, 24.5f);
-    for (fw_list_citer_t iter = fw_list_cbegin(&list_float); iter != fw_list_cend(); iter = fw_list_cnext(iter))
+    fw_list_free(list1);
+
+    printf("\n list string \n\n");
+
+    char str[][10] = {"un", "deux", "trois", "quatre", "cinq", "six", "sept", "huit"};
+
+    fw_list_str_t list_str;
+    fw_list_init(list_str);
+
+    fw_list_iter_t list_str_iter = fw_list_before_begin(list_str);
+
+    for (int i = 0; i < 8; i++)
     {
-        float const* value = fw_list_cget(&list_float, iter); 
-        printf("%f, %p\n", *value, (void const*)value);
+        fw_list_insert_after(list_str, list_str_iter, str[i]);
+        list_str_iter = fw_list_next(list_str_iter);
     }
 
-    fw_list_free(&list_float);
+    for (fw_list_citer_t iter = fw_list_cbegin(list_str); iter != fw_list_cend(); iter = fw_list_cnext(iter))
+    {
+        char* const* value = fw_list_cget(list_str, iter); 
+        printf("%s, %p\n", *value, (void const*)value);
+    }
 
-    printf("\n\nList str\n\n");
-    forward_list_base_t list_str;
-    forward_list_init_(&list_str);
+    fw_list_free(list_str);
 
-    forward_list_push_front_(&list_str, "Ceci est un test", 17ull);
-
-    forward_list_free_(&list_str);
-    
     return 0;
 }

@@ -21,7 +21,7 @@ static forward_list_node_t* new_node(void const *const restrict value,
     }
 
     new->next = next;
-    memcpy((char*)(new + 1), value, size_value);
+    memcpy(new + 1, value, size_value);
 
     return new;
 }
@@ -102,12 +102,12 @@ forward_list_iter_t forward_list_end_(void)
 
 void const* forward_list_cget_(forward_list_citer_t const restrict iter)
 {
-    return (iter != NULL) ? iter +1 : NULL;
+    return iter +1;
 }
 
 void* forward_list_get_(forward_list_iter_t const restrict iter)
 {
-    return (iter != NULL) ? iter +1 : NULL;
+    return iter +1;
 }
 
 void forward_list_set_(forward_list_iter_t restrict iter,
@@ -206,7 +206,7 @@ forward_list_iter_t forward_list_next(forward_list_iter_t iter)
     return iter->next;
 }
 
-void forward_list_merge_(forward_list_base_t* restrict forward_list1, forward_list_base_t* restrict forward_list2)
+void forward_list_splice_after_(forward_list_base_t* restrict forward_list1, forward_list_base_t* restrict forward_list2)
 {
     if (forward_list1->list == NULL)
     {

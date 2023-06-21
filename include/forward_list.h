@@ -24,49 +24,49 @@ typedef struct forward_list_base_t {
 typedef forward_list_node_t *forward_list_iter_t;
 
 
-typedef const forward_list_node_t *forward_list_citer_t;
+typedef forward_list_node_t const *forward_list_citer_t;
 
 
 #define forward_list_t(Type)\
     struct { \
         forward_list_base_t base; \
         Type *ref; \
-        Type const* cref; \
+        Type const *cref; \
         Type tmp; \
     }
 
 
-/**************** COnstructor / Destructor ******************/
+/**************** Constructor / Destructor ******************/
 
 #define forward_list_init(forward_list)\
-    forward_list_init_(&(forward_list)->base)
+    forward_list_init_(&(forward_list).base)
 
 #define forward_list_free(forward_list)\
-    forward_list_free_(&(forward_list)->base)
+    forward_list_free_(&(forward_list).base)
 
 #define forward_list_is_init(forward_list)\
-    forward_list_is_init_(&(forward_list)->base)
+    forward_list_is_init_(&(forward_list).base)
 
 
 /********************* Element access **********************/
 
 #define forward_list_front(forward_list)\
-    ( (forward_list)->ref = forward_list_front_(&(forward_list)->base) )
+    ( (forward_list)->ref = forward_list_front_(&(forward_list).base) )
 
 
 /************************ Iterators ************************/
 
 #define forward_list_cbefore_begin(forward_list)\
-    forward_list_cbefore_begin_(&(forward_list)->base)
+    forward_list_cbefore_begin_(&(forward_list).base)
 
 #define forward_list_before_begin(forward_list)\
-    forward_list_before_begin_(&(forward_list)->base)
+    forward_list_before_begin_(&(forward_list).base)
 
 #define forward_list_cbegin(forward_list)\
-    forward_list_cbegin_(&(forward_list)->base)
+    forward_list_cbegin_(&(forward_list).base)
 
 #define forward_list_begin(forward_list)\
-    forward_list_begin_(&(forward_list)->base)
+    forward_list_begin_(&(forward_list).base)
 
 #define forward_list_cend()\
     forward_list_cend_()
@@ -75,48 +75,48 @@ typedef const forward_list_node_t *forward_list_citer_t;
     forward_list_end_()
 
 #define forward_list_cget(forward_list, const_iterator)\
-    ( (forward_list)->cref = forward_list_cget_(const_iterator) )
+    ( forward_list.cref = forward_list_cget_(const_iterator) )
 
 #define forward_list_get(forward_list, iterator)\
-    ( (forward_list)->ref = forward_list_get_(iterator) )
+    ( forward_list.ref = forward_list_get_(iterator) )
 
 #define forward_list_set(forward_list, iterator, value) \
-    ( (forward_list)->tmp = (value),\
-        forward_list_set_(iterator, &(forward_list)->tmp, \
-                                  sizeof((forward_list)->tmp) ))
+    ( forward_list.tmp = value,\
+        forward_list_set_(iterator, forward_list.tmp, \
+                                  sizeof((forward_list)->tmp)) )
 
 
 /*********** Capacity ***********/
 
 #define forward_list_empty(forward_list)\
-    forward_list_empty_(&(forward_list)->base)
+    forward_list_empty_(&(forward_list).base)
 
 
 
 /********** Modifiers ***********/
 
 #define forward_list_clear(forward_list)\
-    forward_list_clear_(&(forward_list)->base)
+    forward_list_clear_(&(forward_list).base)
 
 #define forward_list_insert_after(forward_list, iterator, value)\
-    ((forward_list)->tmp = value, \
-        forward_list_insert_after_(iterator, &(forward_list)->tmp, sizeof ((forward_list)->tmp)))
+    (forward_list.tmp = value, \
+        forward_list_insert_after_(iterator, &(forward_list).tmp, sizeof (value)))
 
 #define forward_list_erase_after(forward_list, iterator)\
     forward_list_erase_after_(iterator)
 
 #define forward_list_push_front(forward_list, value)\
-    ((forward_list)->tmp = value, \
-        forward_list_push_front_(&(forward_list)->base, &(forward_list)->tmp, sizeof ((forward_list)->tmp)))
+    (forward_list.tmp = value, \
+        forward_list_push_front_(&(forward_list).base, &(forward_list).tmp, sizeof (value)))
 
 #define forward_list_pop_front(forward_list)\
-    forward_list_pop_front_(&(forward_list)->base)
+    forward_list_pop_front_(&(forward_list).base)
 
 
 /********** Operations ***********/
 
-#define forward_list_merge(forward_list_1, forward_list_2) \
-    forward_list_merge_(&(forward_list_1)->base, &(forward_list_2)->base)
+#define forward_list_splice_after(forward_list_1, forward_list_2) \
+    forward_list_splice_after_(&(forward_list_1).base, &(forward_list_2).base)
 
 int forward_list_init_(forward_list_base_t *const restrict forward_list);
 
@@ -166,7 +166,7 @@ forward_list_citer_t forward_list_cnext(forward_list_citer_t iter);
 
 forward_list_iter_t forward_list_next(forward_list_iter_t iter);
 
-void forward_list_merge_(forward_list_base_t* restrict forward_list1, forward_list_base_t* restrict forward_list2);
+void forward_list_splice_after_(forward_list_base_t* restrict forward_list1, forward_list_base_t* restrict forward_list2);
 
 // Alias fw
 
@@ -179,9 +179,6 @@ typedef forward_list_citer_t fw_list_citer_t;
 
 #define fw_list_init(forward_list)  \
             forward_list_init(forward_list)
-
-#define fw_list_is_init(forward_list) \
-            forward_list_is_init(forward_list)
 
 #define fw_list_free(forward_list)  \
             forward_list_free(forward_list)
@@ -219,6 +216,12 @@ typedef forward_list_citer_t fw_list_citer_t;
 #define fw_list_cbegin(forward_list)  \
             forward_list_cbegin(forward_list)
 
+#define fw_list_before_begin(forward_list)  \
+            forward_list_before_begin(forward_list)
+
+#define fw_list_cbefore_begin(forward_list)  \
+            forward_list_cbefore_begin(forward_list)
+
 #define fw_list_end(forward_list)  \
             forward_list_end(forward_list)
 
@@ -232,8 +235,8 @@ typedef forward_list_citer_t fw_list_citer_t;
 #define fw_list_next(iter)  \
             forward_list_next(iter)
 
-#define fw_list_merge(forward_list_1, forward_list_2) \
-    forward_list_merge(forward_list_1, forward_list_2)
+#define fw_list_splice_after(forward_list_1, forward_list_2) \
+    forward_list_splice_after(forward_list_1, forward_list_2)
 
 
 // default type
