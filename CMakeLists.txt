@@ -18,6 +18,8 @@ set (HEADERS
     include/forward_list.h
 )
 
+set_sanitizer()
+
 if (BUILD_TESTING)
     add_subdirectory(${CMAKE_SOURCE_DIR}/test)
 endif()

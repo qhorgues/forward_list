@@ -1,39 +1,70 @@
+function (set_sanitizer)
+	if (NOT MINGW)
+		option(ENEABLE_SANITIZER "Use sanitizer in Debug and RelWithDebInfo build type" TRUE)
+		set(BUILD_DEBUG (${CMAKE_BUILD_TYPE} MATCHES "Debug") OR (${CMAKE_BUILD_TYPE} MATCHES "RelWithDebInfo" ) ) 
+
+		if (BUILD_DEBUG)
+
+			if (ENEABLE_SANITIZER)
+				if (MSVC)
+					list (APPEND CMAKE_EXE_LINKER_FLAGS /fsanitize=address /analyse)
+				else()
+
+					set(SANITIZE 
+						-fsanitize=address
+						-fsanitize=pointer-compare
+						-fsanitize=pointer-subtract
+						-fsanitize=leak
+						-fsanitize=undefined
+						-fsanitize=bounds-strict
+						-fsanitize=float-divide-by-zero
+						-fsanitize=float-cast-overflow
+						-fanalyzer
+					)
+
+					list (APPEND CMAKE_EXE_LINKER_FLAGS ${SANITIZE})
+					add_link_options(${SANITIZE})
+				endif (MSVC)
+			endif (ENEABLE_SANITIZER)
+
+		endif (BUILD_DEBUG)
+	else ()
+	list (APPEND CMAKE_EXE_LINKER_FLAGS -fstack-protector -lssp)
+	endif (NOT MINGW)
+endfunction (set_sanitizer)
+
 
 function(set_target_warnings target)
     option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" TRUE)
     
+	if (NOT MINGW)
 	option(ENEABLE_SANITIZER "Use sanitizer in Debug and RelWithDebInfo build type" TRUE)
+	set(BUILD_DEBUG (${CMAKE_BUILD_TYPE} MATCHES "Debug") OR (${CMAKE_BUILD_TYPE} MATCHES "RelWithDebInfo" ) ) 
+	
+	if (BUILD_DEBUG)
+	
+	if (ENEABLE_SANITIZER)
+				set (FORTIFY -D_FORTIFY_SOURCE=2 -fstack-protector-strong -fstack-clash-protection -fPIE)
+				if (NOT MSVC)
+					set (CMAKE_C_FLAGS_DEBUG "-g -O2" CACHE INTERNAL "debug flags")
 
-    set(BUILD_DEBUG (${CMAKE_BUILD_TYPE} MATCHES "Debug") OR (${CMAKE_BUILD_TYPE} MATCHES "RelWithDebInfo" ) ) 
+					set(SANITIZE 
+						-fsanitize=address
+						-fsanitize=pointer-compare
+						-fsanitize=pointer-subtract
+						-fsanitize=leak
+						-fsanitize=undefined
+						-fsanitize=bounds-strict
+						-fsanitize=float-divide-by-zero
+						-fsanitize=float-cast-overflow
+						-fanalyzer
+					)
 
-    if (BUILD_DEBUG)
-        if (NOT MSVC)
-			set (CMAKE_C_FLAGS_DEBUG "-g -O2" CACHE INTERNAL "debug flags")
-        endif (NOT MSVC)
+				endif (NOT MSVC)
+			endif (ENEABLE_SANITIZER)
 
-		if (ENEABLE_SANITIZER)
-			if (MSVC)
-				set(SANITIZE /fsanitize=address /analyse)
-			else()
-
-				set(SANITIZE 
-					-fsanitize=address
-					-fsanitize=pointer-compare
-					-fsanitize=pointer-substract
-					-fsanitize=leak
-					-fsanitize=no-omit-frame-pointer
-					-fsanitize=undefined
-					-fsanitize=bounds-strict
-					-fsanitize=float-divide-by-zero
-					-fsanitize=float-cast-overflow
-					-fanalyser
-				)
-
-				add_link_options(${SANITIZE})
-			endif (MSVC)
-		endif (ENEABLE_SANITIZER)
-
-    endif (BUILD_DEBUG)
+		endif (BUILD_DEBUG)
+	endif (NOT MINGW)
 
     set (GCC_WARNINGS
 	    -Wall
@@ -69,10 +100,7 @@ function(set_target_warnings target)
 	    -Wstack-usage=1000000
 	    -Wcast-align=strict
 
-	    -D_FORTIFY_SOURCE=2
-	    -fstack-protector-strong
-	    -fstack-clash-protection
-	    -fPIE
+	    ${FORTIFY}
 
 	    -Wl,-z,relro
 	    -Wl,-z,now
@@ -110,11 +138,9 @@ function(set_target_warnings target)
 	    -Wthread-safety-beta
 	    -Wcomma
 	    
-	    -D_FORTIFY_SOURCES
-	    -fstack-protector-strong
+	    ${FORTIFY}
+
 	    -fsanitize=safe-stack
-	    -fPIE
-	    -fstack-clash-protection
 
 	    -Wl,-z,relro
 	    -Wl,-z,now
@@ -145,6 +171,7 @@ function(set_target_warnings target)
     else()
         message(AUTHOR_WARNING "No compiler warnings set for '${CMAKE_C_COMPILER_ID}' compiler.")
     endif()
-
-    target_compile_options(${target} PRIVATE ${FILE_WARNINGS})
+	
+    target_compile_options(${target} PRIVATE ${FILE_WARNINGS} ${SANITIZE})
+	
 endfunction()
