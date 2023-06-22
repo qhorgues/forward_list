@@ -3,18 +3,16 @@
 #include <errno.h>
 #include <forward_list.h>
 
-typedef struct forward_list_node_t
+typedef struct fw_list_t
 {
-    struct forward_list_node_t* next;
-} forward_list_node_t;
+    struct fw_list_t* next;
+} fw_list_t;
 
 #define END_LIST_VALUE NULL
 
-static forward_list_node_t* new_node(void const *const restrict value,
-                                     size_t const size_value, 
-                                     forward_list_node_t *const next)
+static fw_list_t* new_node(void const *value, size_t size_value, fw_list_t *next)
 {
-    forward_list_node_t* new = malloc(sizeof(forward_list_node_t) + size_value);
+    fw_list_t* new = malloc(sizeof(fw_list_t) + size_value);
     if (new == NULL)
     {
         return NULL;
@@ -27,123 +25,81 @@ static forward_list_node_t* new_node(void const *const restrict value,
 }
 
 
-/**************** COnstructor / Destructor ******************/
+/**************** Constructor / Destructor ******************/
 
-int forward_list_init_(forward_list_base_t *const restrict forward_list)
-{
-    memset(forward_list, 0, sizeof(*(forward_list)));
-    forward_list->list = malloc(sizeof(forward_list_node_t));
-    if (forward_list->list == NULL)
-    {
-        errno = ENOMEM;
-        return -1;
-    }
-    forward_list->list->next = END_LIST_VALUE;
-    return 0;
-}
 
-void forward_list_free_(forward_list_base_t *const restrict forward_list)
+void fw_list_free(fw_list_t *forward_list)
 {
-    forward_list_iter_t iter = forward_list->list;
-    while (iter != NULL)
+    fw_list_iter_t iter = fw_list_begin(forward_list);
+    while (iter != fw_list_end())
     {
-        forward_list_iter_t const tmp_iter = iter->next;
+        fw_list_iter_t const tmp_iter = iter->next;
         free(iter);
         iter = tmp_iter;
     }
-    forward_list->list = NULL;
 }
 
-bool forward_list_is_init_(forward_list_base_t *const restrict forward_list)
-{
-    return forward_list->list != NULL;
-}
 
 /********************* Element access **********************/
 
-void* forward_list_front_(forward_list_base_t *const restrict forward_list)
+void* fw_list_front(fw_list_t *forward_list)
 {
-    forward_list_iter_t front = forward_list->list->next;
-    return front +1;
+    return forward_list +1;
 }
 
 
 /************************ Iterators ************************/
 
-forward_list_citer_t forward_list_cbefore_begin_(forward_list_base_t *const restrict forward_list)
+
+
+fw_list_citer_t fw_list_cbegin(fw_list_t *forward_list)
 {
-    return (forward_list_citer_t)(forward_list->list);
+    return (fw_list_citer_t)(forward_list);
 }
 
-forward_list_iter_t forward_list_before_begin_(forward_list_base_t *const restrict forward_list)
+fw_list_iter_t fw_list_begin(fw_list_t *forward_list)
 {
-    return (forward_list_iter_t)(forward_list->list);
+    return (fw_list_iter_t)(forward_list);
 }
 
-forward_list_citer_t forward_list_cbegin_(forward_list_base_t *const restrict forward_list)
+fw_list_citer_t fw_list_cend(void)
 {
-    return (forward_list_citer_t)(forward_list->list->next);
+    return (fw_list_citer_t)(END_LIST_VALUE);
 }
 
-forward_list_iter_t forward_list_begin_(forward_list_base_t *const restrict forward_list)
+fw_list_iter_t fw_list_end(void)
 {
-    return (forward_list_iter_t)(forward_list->list->next);
+    return (fw_list_iter_t)(END_LIST_VALUE);
 }
 
-forward_list_citer_t forward_list_cend_(void)
-{
-    return (forward_list_citer_t)(END_LIST_VALUE);
-}
-
-forward_list_iter_t forward_list_end_(void)
-{
-    return (forward_list_iter_t)(END_LIST_VALUE);
-}
-
-void const* forward_list_cget_(forward_list_citer_t const restrict iter)
+void const* fw_list_cget(fw_list_citer_t iter)
 {
     return iter +1;
 }
 
-void* forward_list_get_(forward_list_iter_t const restrict iter)
+void* fw_list_get(fw_list_iter_t iter)
 {
     return iter +1;
 }
 
-void forward_list_set_(forward_list_iter_t restrict iter,
-                                   void const *const restrict value, 
-                                   size_t const size_value)
+void fw_list_set(fw_list_iter_t iter, void const *value, size_t size_value)
 {
     memcpy(iter +1, value, size_value);
 }
 
 /*********** Capacity ***********/
 
-bool forward_list_empty_(forward_list_base_t *const restrict forward_list)
+bool fw_list_empty(fw_list_t const *forward_list)
 {
-    return forward_list->list->next == END_LIST_VALUE;
+    return forward_list == END_LIST_VALUE;
 }
 
 /********** Modifiers ***********/
 
-void forward_list_clear_(forward_list_base_t *const restrict forward_list)
-{
-    forward_list_iter_t iter = forward_list->list->next;
-    while (iter != END_LIST_VALUE)
-    {
-        forward_list_iter_t const tmp_iter = iter->next;
-        free(iter);
-        iter = tmp_iter;
-    }
-    forward_list->list->next = END_LIST_VALUE;
-}
 
-
-forward_list_iter_t forward_list_insert_after_(forward_list_iter_t const restrict iter,
-                              void const *const restrict value, 
-                              size_t const size_value)
+fw_list_iter_t fw_list_insert_after(fw_list_iter_t iter, void const *value, size_t size_value)
 {
-    forward_list_iter_t new = new_node(value, size_value, iter->next);
+    fw_list_iter_t new = new_node(value, size_value, iter->next);
     if (new == NULL)
     {
         return END_LIST_VALUE;
@@ -152,41 +108,38 @@ forward_list_iter_t forward_list_insert_after_(forward_list_iter_t const restric
     return new;
 }
 
-int forward_list_erase_after_(forward_list_iter_t const restrict iter)
+int fw_list_erase_after(fw_list_iter_t iter)
 {
     if (iter->next == END_LIST_VALUE)
     {
         errno = EDOM;
         return EDOM;
     }
-    forward_list_iter_t iter_next = iter->next->next;
+    fw_list_iter_t iter_next = iter->next->next;
     free(iter->next);
     iter->next = iter_next;
     return 0;
 }
 
-forward_list_iter_t forward_list_push_front_(forward_list_base_t *const restrict forward_list, 
-                             void const *const value, 
-                             size_t const size_value)
+fw_list_t* fw_list_push_front(fw_list_t *forward_list, void const *value, size_t size_value)
 {
-    forward_list_iter_t new = new_node(value, size_value, forward_list->list->next);
+    fw_list_t* new = new_node(value, size_value, forward_list);
     if (new == NULL)
     {
         return END_LIST_VALUE;
     }
-    forward_list->list->next = new;
+    forward_list = new;
     return new;
 }
 
-int forward_list_pop_front_(forward_list_base_t *const restrict forward_list)
+fw_list_t* fw_list_pop_front(fw_list_t *forward_list)
 {
-    forward_list_iter_t iter_next = forward_list->list->next->next;
-    free(forward_list->list->next);
-    forward_list->list->next = iter_next;
-    return 0;
+    fw_list_t* iter_next = forward_list->next;
+    free(forward_list);
+    return iter_next;
 }
 
-forward_list_citer_t forward_list_cnext(forward_list_citer_t iter)
+fw_list_citer_t fw_list_cnext(fw_list_citer_t iter)
 {
     if (iter == END_LIST_VALUE)
     {
@@ -196,7 +149,7 @@ forward_list_citer_t forward_list_cnext(forward_list_citer_t iter)
     return iter->next;
 }
 
-forward_list_iter_t forward_list_next(forward_list_iter_t iter)
+fw_list_iter_t fw_list_next(fw_list_iter_t iter)
 {
     if (iter == END_LIST_VALUE)
     {
@@ -206,33 +159,101 @@ forward_list_iter_t forward_list_next(forward_list_iter_t iter)
     return iter->next;
 }
 
-void forward_list_splice_after_(forward_list_base_t* restrict forward_list1, forward_list_base_t* restrict forward_list2)
+fw_list_t* fw_list_splice_after(fw_list_t *forward_list1, fw_list_t *forward_list2)
 {
-    if (forward_list1->list == NULL)
+    if (fw_list_empty(forward_list2))
     {
-        forward_list_init_(forward_list1);
-        if (forward_list2->list != NULL)
-        {
-            forward_list1->list->next = forward_list2->list->next;
-            forward_list2->list->next = END_LIST_VALUE;
-        }
-        return;
+        return forward_list1;
     }
-    else if (forward_list2->list == NULL)
+    else if (fw_list_empty(forward_list1))
     {
-        return;
-    }
-    else if (forward_list2->list->next == END_LIST_VALUE)
-    {
-        forward_list_free_(forward_list2);
+        return forward_list2;
     }
     else
     {
-        fw_list_iter_t iter = forward_list_before_begin_(forward_list1);
-        for (; fw_list_next(iter) != END_LIST_VALUE; iter = fw_list_next(iter));
+        fw_list_iter_t iter = fw_list_before_begin(forward_list1);
+        fw_list_iter_t next = fw_list_next(iter);
+        while (next != END_LIST_VALUE)
+        {
+            iter = next;
+            next = fw_list_next(next);
+        }
         
-        iter->next = forward_list2->list->next;
-        forward_list2->list->next = END_LIST_VALUE;
-        forward_list_free_(forward_list2);
+        iter->next = forward_list2;
     }
+    return forward_list1;
+}
+
+fw_list_t* fw_list_merge(fw_list_t *forward_list1, fw_list_t *forward_list2, int (*cmp)(const void*, const void*))
+{
+    if (forward_list1 == END_LIST_VALUE)
+    {
+        return forward_list2;
+    }
+    else if (forward_list2 == END_LIST_VALUE) {
+        return forward_list1;
+    }
+ 
+    fw_list_t* result = fw_list_init();
+ 
+    // sélectionne `a` ou `b`, et se reproduit
+    if ((*cmp)(fw_list_cget(forward_list1), fw_list_cget(forward_list2)) <= 0)
+    {
+        result = forward_list1;
+        result->next = fw_list_merge(forward_list1->next, forward_list2, cmp);
+    }
+    else {
+        result = forward_list2;
+        result->next = fw_list_merge(forward_list1, forward_list2->next, cmp);
+    }
+ 
+    return result;
+}
+
+static void frontBackSplit(fw_list_t *list, fw_list_t **frontRef, fw_list_t **backRef)
+{
+    if (list == END_LIST_VALUE || list->next == END_LIST_VALUE)
+    {
+        *frontRef = list;
+        *backRef = NULL;
+        return;
+    }
+ 
+    fw_list_t* slow = list;
+    fw_list_t* fast = list->next;
+
+    while (fast != NULL)
+    {
+        fast = fast->next;
+        if (fast != NULL)
+        {
+            slow = slow->next;
+            fast = fast->next;
+        }
+    }
+ 
+    *frontRef = list;
+    *backRef = slow->next;
+    slow->next = NULL;
+}
+ 
+fw_list_t* fw_list_sort(fw_list_t *forward_list, int (*cmp)(const void*, const void*))
+{
+    // cas de base — longueur 0 ou 1
+    if (forward_list == END_LIST_VALUE || forward_list->next == END_LIST_VALUE) {
+        return forward_list;
+    }
+ 
+    fw_list_t* left;
+    fw_list_t* right;
+ 
+    // divise `head` en sous-listes `a` et `b`
+    frontBackSplit(forward_list, &left, &right);
+ 
+    // trie récursivementment les sous-listes
+    left = fw_list_sort(left, cmp);
+    right = fw_list_sort(right, cmp);
+ 
+    // réponse = fusionner les deux listes triées
+    return fw_list_merge(left, right, cmp);
 }
