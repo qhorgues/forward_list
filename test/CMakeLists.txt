@@ -14,6 +14,7 @@ set (SRCS
 set (HEADERS
 )
 
+set_sanitizer()
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 set (CMAKE_C_STANDARD 17)
