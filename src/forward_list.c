@@ -215,17 +215,17 @@ static void frontBackSplit(fw_list_t *list, fw_list_t **frontRef, fw_list_t **ba
     if (list == END_LIST_VALUE || list->next == END_LIST_VALUE)
     {
         *frontRef = list;
-        *backRef = NULL;
+        *backRef = END_LIST_VALUE;
         return;
     }
  
     fw_list_t* slow = list;
     fw_list_t* fast = list->next;
 
-    while (fast != NULL)
+    while (fast != END_LIST_VALUE)
     {
         fast = fast->next;
-        if (fast != NULL)
+        if (fast != END_LIST_VALUE)
         {
             slow = slow->next;
             fast = fast->next;
@@ -234,7 +234,7 @@ static void frontBackSplit(fw_list_t *list, fw_list_t **frontRef, fw_list_t **ba
  
     *frontRef = list;
     *backRef = slow->next;
-    slow->next = NULL;
+    slow->next = END_LIST_VALUE;
 }
  
 fw_list_t* fw_list_sort(fw_list_t *forward_list, int (*cmp)(const void*, const void*))

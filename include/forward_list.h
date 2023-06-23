@@ -42,13 +42,13 @@ fw_list_t* fw_list_sort(fw_list_t *forward_list, int (*cmp)(const void*, const v
 
 static inline fw_list_t* fw_list_init(void)
 {
-    return NULL;
+    return fw_list_end();
 }
 
 static inline void fw_list_clear(fw_list_t **forward_list)
 {
     fw_list_free(*forward_list);
-    *forward_list = NULL;
+    *forward_list = fw_list_end();
 }
 
 #define fw_cbefore_begin(forward_list) \
