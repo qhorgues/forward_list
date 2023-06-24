@@ -242,7 +242,7 @@ void fw_list_sort(fw_list_t **forward_list, int (*cmp)(const void*, const void*)
  * @warning The returned pointer points to invalid data Any 
  * operation to retrieve the data causes undefined behaviour
  */
-#define fw_cbefore_begin(forward_list) \
+#define fw_list_cbefore_begin(forward_list) \
     (fw_list_citer_t)(&forward_list)
 
 /**
