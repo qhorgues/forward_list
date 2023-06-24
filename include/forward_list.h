@@ -31,13 +31,13 @@ void fw_list_set(fw_list_iter_t iter, void const *value, size_t size_value);
 bool fw_list_empty(fw_list_t const *forward_list);
 fw_list_iter_t fw_list_insert_after(fw_list_iter_t iter, void const *value, size_t size_value);
 int fw_list_erase_after(fw_list_iter_t iter);
-fw_list_t* fw_list_push_front(fw_list_t *forward_list, void const *value, size_t size_value);
-fw_list_t* fw_list_pop_front(fw_list_t *forward_list);
+int fw_list_push_front(fw_list_t **forward_list, void const *value, size_t size_value);
+void fw_list_pop_front(fw_list_t **forward_list);
 fw_list_citer_t fw_list_cnext(fw_list_citer_t iter);
 fw_list_iter_t fw_list_next(fw_list_iter_t iter);
-fw_list_t* fw_list_splice_after(fw_list_t *forward_list1, fw_list_t *forward_list2);
-fw_list_t* fw_list_merge(fw_list_t *forward_list1, fw_list_t *forward_list2, int (*cmp)(const void*, const void*));
-fw_list_t* fw_list_sort(fw_list_t *forward_list, int (*cmp)(const void*, const void*));
+void fw_list_splice_after(fw_list_t **forward_list1, fw_list_t **forward_list2);
+void fw_list_merge(fw_list_t **forward_list1, fw_list_t **forward_list2, int (*cmp)(const void*, const void*));
+void fw_list_sort(fw_list_t **forward_list, int (*cmp)(const void*, const void*));
 
 
 static inline fw_list_t* fw_list_init(void)

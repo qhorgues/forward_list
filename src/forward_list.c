@@ -84,7 +84,11 @@ void* fw_list_get(fw_list_iter_t iter)
 
 void fw_list_set(fw_list_iter_t iter, void const *value, size_t size_value)
 {
-    memcpy(iter +1, value, size_value);
+    #ifdef __STDC_LIB_EXT1_
+        memcpy_s(iter +1, size_value, value, size_value);
+    #else
+        memcpy(iter +1, value, size_value);
+    #endif
 }
 
 /*********** Capacity ***********/
@@ -121,22 +125,22 @@ int fw_list_erase_after(fw_list_iter_t iter)
     return 0;
 }
 
-fw_list_t* fw_list_push_front(fw_list_t *forward_list, void const *value, size_t size_value)
+int fw_list_push_front(fw_list_t **forward_list, void const *value, size_t size_value)
 {
-    fw_list_t* new = new_node(value, size_value, forward_list);
+    fw_list_t* new = new_node(value, size_value, *forward_list);
     if (new == NULL)
     {
-        return END_LIST_VALUE;
+        return -1;
     }
-    forward_list = new;
-    return new;
+    *forward_list = new;
+    return 0;
 }
 
-fw_list_t* fw_list_pop_front(fw_list_t *forward_list)
+void fw_list_pop_front(fw_list_t **forward_list)
 {
-    fw_list_t* iter_next = forward_list->next;
-    free(forward_list);
-    return iter_next;
+    fw_list_t* iter_front = *forward_list;
+    *forward_list = (*forward_list)->next;
+    free(iter_front);
 }
 
 fw_list_citer_t fw_list_cnext(fw_list_citer_t iter)
@@ -159,19 +163,20 @@ fw_list_iter_t fw_list_next(fw_list_iter_t iter)
     return iter->next;
 }
 
-fw_list_t* fw_list_splice_after(fw_list_t *forward_list1, fw_list_t *forward_list2)
+void fw_list_splice_after(fw_list_t **forward_list1, fw_list_t **forward_list2)
 {
-    if (fw_list_empty(forward_list2))
+    if (fw_list_empty(*forward_list2))
     {
-        return forward_list1;
+        return;
     }
-    else if (fw_list_empty(forward_list1))
+    else if (fw_list_empty(*forward_list1))
     {
-        return forward_list2;
+        *forward_list1 = *forward_list2;
+        *forward_list2 = END_LIST_VALUE;
     }
     else
     {
-        fw_list_iter_t iter = fw_list_before_begin(forward_list1);
+        fw_list_iter_t iter = fw_list_before_begin(*forward_list1);
         fw_list_iter_t next = fw_list_next(iter);
         while (next != END_LIST_VALUE)
         {
@@ -179,12 +184,12 @@ fw_list_t* fw_list_splice_after(fw_list_t *forward_list1, fw_list_t *forward_lis
             next = fw_list_next(next);
         }
         
-        iter->next = forward_list2;
+        iter->next = *forward_list2;
     }
-    return forward_list1;
+    *forward_list2 = END_LIST_VALUE;
 }
 
-fw_list_t* fw_list_merge(fw_list_t *forward_list1, fw_list_t *forward_list2, int (*cmp)(const void*, const void*))
+static fw_list_t* merge(fw_list_t *forward_list1, fw_list_t *forward_list2, int (*cmp)(const void*, const void*))
 {
     if (forward_list1 == END_LIST_VALUE)
     {
@@ -194,20 +199,26 @@ fw_list_t* fw_list_merge(fw_list_t *forward_list1, fw_list_t *forward_list2, int
         return forward_list1;
     }
  
-    fw_list_t* result = fw_list_init();
+    fw_list_t* result;
  
     // sélectionne `a` ou `b`, et se reproduit
     if ((*cmp)(fw_list_cget(forward_list1), fw_list_cget(forward_list2)) <= 0)
     {
         result = forward_list1;
-        result->next = fw_list_merge(forward_list1->next, forward_list2, cmp);
+        result->next = merge(forward_list1->next, forward_list2, cmp);
     }
     else {
         result = forward_list2;
-        result->next = fw_list_merge(forward_list1, forward_list2->next, cmp);
+        result->next = merge(forward_list1, forward_list2->next, cmp);
     }
  
     return result;
+}
+
+void fw_list_merge(fw_list_t **forward_list1, fw_list_t **forward_list2, int (*cmp)(const void*, const void*))
+{
+    *forward_list1 = merge(*forward_list1, *forward_list2, cmp);
+    *forward_list2 = END_LIST_VALUE;
 }
 
 static void frontBackSplit(fw_list_t *list, fw_list_t **frontRef, fw_list_t **backRef)
@@ -237,23 +248,24 @@ static void frontBackSplit(fw_list_t *list, fw_list_t **frontRef, fw_list_t **ba
     slow->next = END_LIST_VALUE;
 }
  
-fw_list_t* fw_list_sort(fw_list_t *forward_list, int (*cmp)(const void*, const void*))
+void fw_list_sort(fw_list_t **forward_list, int (*cmp)(const void*, const void*))
 {
     // cas de base — longueur 0 ou 1
-    if (forward_list == END_LIST_VALUE || forward_list->next == END_LIST_VALUE) {
-        return forward_list;
+    if (*forward_list == END_LIST_VALUE || (*forward_list)->next == END_LIST_VALUE) {
+        return;
     }
  
     fw_list_t* left;
     fw_list_t* right;
  
     // divise `head` en sous-listes `a` et `b`
-    frontBackSplit(forward_list, &left, &right);
+    frontBackSplit(*forward_list, &left, &right);
  
     // trie récursivementment les sous-listes
-    left = fw_list_sort(left, cmp);
-    right = fw_list_sort(right, cmp);
+    fw_list_sort(&left, cmp);
+    fw_list_sort(&right, cmp);
  
     // réponse = fusionner les deux listes triées
-    return fw_list_merge(left, right, cmp);
+    fw_list_merge(&left, &right, cmp);
+    *forward_list = left;
 }
