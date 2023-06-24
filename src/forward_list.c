@@ -3,10 +3,6 @@
 #include <errno.h>
 #include <forward_list.h>
 
-/**
- * @brief Structure of list
- * 
- */
 typedef struct fw_list_t
 {
     struct fw_list_t* next;

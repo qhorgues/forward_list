@@ -12,10 +12,17 @@ extern "C"
 #include <stdbool.h>
 
 /**
+ * @struct fw_list_t
  * @brief Structure representing the chained list
  * 
  */
 struct fw_list_t;
+
+/**
+ * @struct fw_list_t
+ * @brief Structure representing the chained list
+ * 
+ */
 typedef struct fw_list_t fw_list_t;
 
 /**
