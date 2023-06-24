@@ -12,7 +12,7 @@ extern "C"
 #include <stdbool.h>
 
 /**
- * @struct fw_list_t
+ * @typedef fw_list_t
  * @brief Structure representing the chained list
  * 
  */
