@@ -7,6 +7,9 @@ If you don't have CMake, install it first with your packet manager or via https:
 In the directory run the command
 ```bash
 cmake -S . -B build -DCMAKE_BUILD_TYPE:STRING='Release' -DENEABLE_SANITIZER=OFF -DBUILD_TESTING=OFF
+```
+and
+```bash
 cd build
 ```
 Then, depending on your compilation system, compile the program with make, for example
