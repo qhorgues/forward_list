@@ -6,7 +6,7 @@ forward_list object in C
 If you don't have CMake, install it first with your packet manager or via https://cmake.org/download/
 In the directory run the command
 ```bash
-cmake -S . -B build -C ./  -DCMAKE_BUILD_TYPE:STRING='Release' -DENEABLE_SANITIZER=OFF -DBUILD_TESTING=OFF
+cmake -S . -B build -DCMAKE_BUILD_TYPE:STRING='Release' -DENEABLE_SANITIZER=OFF -DBUILD_TESTING=OFF
 cd build
 ```
 Then, depending on your compilation system, compile the program with make, for example
