@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.20)
 
-project (Test_forward_list LANGUAGES C VERSION 1.0)
+project (Test_forward_list LANGUAGES C VERSION 2.0)
 
 include (${CMAKE_SOURCE_DIR}/cmake/CompilerWarnings.cmake)
 include (${CMAKE_SOURCE_DIR}/cmake/option.cmake)
