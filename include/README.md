@@ -70,4 +70,3 @@ if (fw_list_empty(list))
 }
 ```
 
-
