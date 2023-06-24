@@ -73,7 +73,7 @@ fw_list_iter_t fw_list_begin(fw_list_t *forward_list);
 /**
  * @brief Return an constant iterator on the element after the last element
  * @warning The returned pointer points to invalid data Any 
- * operation to retrieve the data causes invalid behaviour
+ * operation to retrieve the data causes undefined behaviour
  * @return fw_list_citer_t constant iterator after the last élément
  */
 fw_list_citer_t fw_list_cend(void);
@@ -81,7 +81,7 @@ fw_list_citer_t fw_list_cend(void);
 /**
  * @brief Return an iterator on the element after the last element
  * @warning The returned pointer points to invalid data Any 
- * operation to retrieve the data causes invalid behaviour
+ * operation to retrieve the data causes undefined behaviour
  * @return fw_list_citer_t iterator after the last élément
  */
 fw_list_iter_t fw_list_end(void);
@@ -233,7 +233,7 @@ void fw_list_sort(fw_list_t **forward_list, int (*cmp)(const void*, const void*)
  * @brief Returns an constant iterator on the element
  * preceding the first element of the list
  * @warning The returned pointer points to invalid data Any 
- * operation to retrieve the data causes invalid behaviour
+ * operation to retrieve the data causes undefined behaviour
  */
 #define fw_cbefore_begin(forward_list) \
     (fw_list_citer_t)(&forward_list)
@@ -242,7 +242,7 @@ void fw_list_sort(fw_list_t **forward_list, int (*cmp)(const void*, const void*)
  * @brief Returns an iterator on the element
  * preceding the first element of the list
  * @warning The returned pointer points to invalid data Any 
- * operation to retrieve the data causes invalid behaviour
+ * operation to retrieve the data causes undefined behaviour
  */
 #define fw_list_before_begin(forward_list) \
     (fw_list_iter_t)(&forward_list)
