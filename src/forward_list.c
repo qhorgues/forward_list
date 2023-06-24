@@ -4,7 +4,7 @@
 #include <forward_list.h>
 
 /**
- * @brief 
+ * @brief Structure of list
  * 
  */
 typedef struct fw_list_t
