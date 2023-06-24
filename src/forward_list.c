@@ -95,6 +95,26 @@ void fw_list_set(fw_list_iter_t iter, void const *value, size_t size_value)
     #endif
 }
 
+fw_list_citer_t fw_list_cnext(fw_list_citer_t iter)
+{
+    if (iter == END_LIST_VALUE)
+    {
+        errno = EFAULT;
+        return END_LIST_VALUE;
+    }
+    return iter->next;
+}
+
+fw_list_iter_t fw_list_next(fw_list_iter_t iter)
+{
+    if (iter == END_LIST_VALUE)
+    {
+        errno = EFAULT;
+        return END_LIST_VALUE;
+    }
+    return iter->next;
+}
+
 /*********** Capacity ***********/
 
 bool fw_list_empty(fw_list_t const *forward_list)
@@ -151,26 +171,6 @@ void fw_list_pop_front(fw_list_t **forward_list)
     fw_list_t* iter_front = *forward_list;
     *forward_list = (*forward_list)->next;
     free(iter_front);
-}
-
-fw_list_citer_t fw_list_cnext(fw_list_citer_t iter)
-{
-    if (iter == END_LIST_VALUE)
-    {
-        errno = EFAULT;
-        return END_LIST_VALUE;
-    }
-    return iter->next;
-}
-
-fw_list_iter_t fw_list_next(fw_list_iter_t iter)
-{
-    if (iter == END_LIST_VALUE)
-    {
-        errno = EFAULT;
-        return END_LIST_VALUE;
-    }
-    return iter->next;
 }
 
 void fw_list_splice_after(fw_list_t **forward_list1, fw_list_t **forward_list2)
