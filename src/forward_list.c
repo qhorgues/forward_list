@@ -3,6 +3,10 @@
 #include <errno.h>
 #include <forward_list.h>
 
+/**
+ * @brief 
+ * 
+ */
 typedef struct fw_list_t
 {
     struct fw_list_t* next;
@@ -27,6 +31,10 @@ static fw_list_t* new_node(void const *value, size_t size_value, fw_list_t *next
 
 /**************** Constructor / Destructor ******************/
 
+fw_list_t* fw_list_init(void)
+{
+    return END_LIST_VALUE;
+}
 
 void fw_list_free(fw_list_t *forward_list)
 {
@@ -98,6 +106,12 @@ bool fw_list_empty(fw_list_t const *forward_list)
     return forward_list == END_LIST_VALUE;
 }
 
+void fw_list_clear(fw_list_t **forward_list)
+{
+    fw_list_free(*forward_list);
+    *forward_list = fw_list_end();
+}
+
 /********** Modifiers ***********/
 
 
@@ -117,7 +131,7 @@ int fw_list_erase_after(fw_list_iter_t iter)
     if (iter->next == END_LIST_VALUE)
     {
         errno = EDOM;
-        return EDOM;
+        return -1;
     }
     fw_list_iter_t iter_next = iter->next->next;
     free(iter->next);
