@@ -1,6 +1,23 @@
 # forward_list
 forward_list object in C
 
+## Install
+
+If you don't have CMake, install it first with your packet manager or via https://cmake.org/download/
+In the directory run the command
+```bash
+cmake -S . -B build -C ./  -DCMAKE_BUILD_TYPE:STRING='Release' -DENEABLE_SANITIZER=OFF -DBUILD_TESTING=OFF
+cd build
+```
+Then, depending on your compilation system, compile the program with make, for example
+```bash
+make -k all
+```
+You can also request immediate installation with 
+```bash
+make install
+```
+
 ## Constructor/Destructor
 To initialise a list to the empty list, use the `fw_list_init` function.
 ```c
