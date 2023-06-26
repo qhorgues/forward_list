@@ -23,6 +23,10 @@ set_sanitizer()
 if (BUILD_TESTING)
     add_subdirectory(${CMAKE_SOURCE_DIR}/test)
 endif()
+option(BUILD_DOC "Build documentation" ON)
+if (BUILD_DOC)
+    add_subdirectory(${CMAKE_SOURCE_DIR}/Docs)
+endif()
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
