@@ -2,8 +2,8 @@ cmake_minimum_required (VERSION 3.20)
 
 project (forward_list LANGUAGES C VERSION 2.0)
 
-include(CTest)
-enable_testing()
+#include(CTest)
+#enable_testing()
 
 include(${CMAKE_SOURCE_DIR}/cmake/option.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/CompilerWarnings.cmake)
