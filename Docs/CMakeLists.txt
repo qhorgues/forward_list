@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.20)
 
-project (Docs VERSION 2.0)
+project (forward_list VERSION 2.0)
 
 # first we can indicate the documentation build as an option and set it to ON by defaul
 
@@ -27,3 +27,6 @@ if (DOXYGEN_FOUND)
 else (DOXYGEN_FOUND)
   message("Doxygen need to be installed to generate the doxygen documentation")
 endif (DOXYGEN_FOUND)
+
+include (GNUInstallDirs)
+install(DIRECTORY ${CMAKE_BINARY_DIR}/Docs/html/ DESTINATION ${CMAKE_INSTALL_FULL_DOCDIR})
