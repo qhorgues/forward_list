@@ -20,9 +20,11 @@ set (HEADERS
 
 set_sanitizer()
 
-if (BUILD_TESTING)
+option(BUILD_TEST "Build exemple" ON)
+if (BUILD_TEST)
     add_subdirectory(${CMAKE_SOURCE_DIR}/test)
 endif()
+
 option(BUILD_DOC "Build documentation" ON)
 if (BUILD_DOC)
     add_subdirectory(${CMAKE_SOURCE_DIR}/Docs)
