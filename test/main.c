@@ -54,7 +54,7 @@ int main(void)
     fw_list_push_front(&list_str, "Et un seconde chaine de caractere", 
                                             sizeof("Et un seconde chaine de caractere"));
     fw_list_insert_after(fw_list_begin(list_str), "Une autre chaine", sizeof("Une autre chaine"));
-    fw_list_erase_after(fw_list_before_begin(list_str));
+    fw_list_erase_after(fw_list_before_begin(&list_str));
 
     printf("%s\n-----------------------------\n", (char*)fw_list_front(list_str));
 
