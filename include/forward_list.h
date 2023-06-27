@@ -55,9 +55,33 @@ void fw_list_free(fw_list_t *forward_list);
  * @brief Returns a pointer to the data in the first link
  * @warning Undefined behaviour if the list is empty
  * @param[in] forward_list The chained list
+ * @return const void* Pointer to data
+ */
+const void* fw_list_cfront(fw_list_t const *forward_list);
+
+/**
+ * @brief Returns a constant pointer to the data in the first link
+ * @warning Undefined behaviour if the list is empty
+ * @param[in] forward_list The chained list
  * @return void* Pointer to data
  */
 void* fw_list_front(fw_list_t *forward_list);
+
+/**
+ * @brief Returns an constant iterator on the element
+ * preceding the first element of the list
+ * @warning The returned pointer points to invalid data Any 
+ * operation to retrieve the data causes undefined behaviour
+ */
+fw_list_citer_t fw_list_cbefore_begin(fw_list_t const *const *forward_list);
+
+/**
+ * @brief Returns an iterator on the element
+ * preceding the first element of the list
+ * @warning The returned pointer points to invalid data Any 
+ * operation to retrieve the data causes undefined behaviour
+ */
+fw_list_iter_t fw_list_before_begin(fw_list_t **forward_list);
 
 /**
  * @brief Returns an iterator on constant data pointing to
@@ -66,7 +90,7 @@ void* fw_list_front(fw_list_t *forward_list);
  * @param[in] forward_list The chained list
  * @return fw_list_citer_t iterator on the first élément
  */
-fw_list_citer_t fw_list_cbegin(fw_list_t *forward_list);
+fw_list_citer_t fw_list_cbegin(fw_list_t const *forward_list);
 
 /**
  * @brief Returns an iterator on data pointing to
@@ -235,24 +259,6 @@ void fw_list_merge(fw_list_t **forward_list1, fw_list_t **forward_list2, int (*c
  * The function must not modify the objects passed to it and must return consistent results when called for the same objects, regardless of their positions in the array.
  */
 void fw_list_sort(fw_list_t **forward_list, int (*cmp)(const void*, const void*));
-
-/**
- * @brief Returns an constant iterator on the element
- * preceding the first element of the list
- * @warning The returned pointer points to invalid data Any 
- * operation to retrieve the data causes undefined behaviour
- */
-#define fw_list_cbefore_begin(forward_list) \
-    (fw_list_citer_t)(&forward_list)
-
-/**
- * @brief Returns an iterator on the element
- * preceding the first element of the list
- * @warning The returned pointer points to invalid data Any 
- * operation to retrieve the data causes undefined behaviour
- */
-#define fw_list_before_begin(forward_list) \
-    (fw_list_iter_t)(&forward_list)
 
 #if defined(__cplusplus)
 }

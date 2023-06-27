@@ -35,7 +35,7 @@ fw_list_t* fw_list_init(void)
 void fw_list_free(fw_list_t *forward_list)
 {
     fw_list_iter_t iter = fw_list_begin(forward_list);
-    while (iter != fw_list_end())
+    while (iter != END_LIST_VALUE)
     {
         fw_list_iter_t const tmp_iter = iter->next;
         free(iter);
@@ -46,6 +46,11 @@ void fw_list_free(fw_list_t *forward_list)
 
 /********************* Element access **********************/
 
+const void* fw_list_cfront(fw_list_t const *forward_list)
+{
+    return forward_list +1;
+}
+
 void* fw_list_front(fw_list_t *forward_list)
 {
     return forward_list +1;
@@ -54,9 +59,17 @@ void* fw_list_front(fw_list_t *forward_list)
 
 /************************ Iterators ************************/
 
+fw_list_citer_t fw_list_cbefore_begin(fw_list_t const *const *forward_list)
+{
+    return (fw_list_citer_t)forward_list;
+}
 
+fw_list_iter_t fw_list_before_begin(fw_list_t **forward_list)
+{
+    return (fw_list_iter_t)forward_list;
+}
 
-fw_list_citer_t fw_list_cbegin(fw_list_t *forward_list)
+fw_list_citer_t fw_list_cbegin(fw_list_t const *forward_list)
 {
     return (fw_list_citer_t)(forward_list);
 }
@@ -125,7 +138,7 @@ bool fw_list_empty(fw_list_t const *forward_list)
 void fw_list_clear(fw_list_t **forward_list)
 {
     fw_list_free(*forward_list);
-    *forward_list = fw_list_end();
+    *forward_list = END_LIST_VALUE;
 }
 
 /********** Modifiers ***********/
@@ -186,7 +199,7 @@ void fw_list_splice_after(fw_list_t **forward_list1, fw_list_t **forward_list2)
     }
     else
     {
-        fw_list_iter_t iter = fw_list_before_begin(*forward_list1);
+        fw_list_iter_t iter = fw_list_before_begin(forward_list1);
         fw_list_iter_t next = fw_list_next(iter);
         while (next != END_LIST_VALUE)
         {
