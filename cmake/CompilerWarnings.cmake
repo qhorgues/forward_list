@@ -38,15 +38,13 @@ function(set_target_warnings target)
     option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" TRUE)
     
 	if (NOT MINGW)
-	set(BUILD_DEBUG (${CMAKE_BUILD_TYPE} MATCHES "Debug") OR (${CMAKE_BUILD_TYPE} MATCHES "RelWithDebInfo" ) ) 
-	
-	if (BUILD_DEBUG)
-	
+		set(BUILD_DEBUG (${CMAKE_BUILD_TYPE} MATCHES "Debug") OR (${CMAKE_BUILD_TYPE} MATCHES "RelWithDebInfo" ) ) 
+		
+		if (BUILD_DEBUG)		
 			option(ENEABLE_SANITIZER "Use sanitizer in Debug and RelWithDebInfo build type" TRUE)
+
 			if (ENEABLE_SANITIZER)
-				set (FORTIFY -D_FORTIFY_SOURCE=2 -fstack-protector-strong -fstack-clash-protection -fPIE)
 				if (NOT MSVC)
-					set (CMAKE_C_FLAGS_DEBUG "-g -O2" CACHE INTERNAL "debug flags")
 
 					set(SANITIZE 
 						-fsanitize=address
@@ -58,11 +56,12 @@ function(set_target_warnings target)
 						-fsanitize=float-divide-by-zero
 						-fsanitize=float-cast-overflow
 						-fanalyzer
-					)
-
+						)
+						
 				endif (NOT MSVC)
+			elseif (NOT MSVC)		
+				set (FORTIFY -D_FORTIFY_SOURCE=2 -fstack-protector-strong -fstack-clash-protection -fPIE)
 			endif (ENEABLE_SANITIZER)
-
 		endif (BUILD_DEBUG)
 	endif (NOT MINGW)
 
