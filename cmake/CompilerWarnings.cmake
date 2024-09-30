@@ -1,9 +1,7 @@
 function (set_sanitizer)
-	if (NOT MINGW)
-	set(BUILD_DEBUG (${CMAKE_BUILD_TYPE} MATCHES "Debug") OR (${CMAKE_BUILD_TYPE} MATCHES "RelWithDebInfo" ) ) 
-	
-	if (BUILD_DEBUG)
-	
+	if (NOT MINGW)		
+		if ((${CMAKE_BUILD_TYPE} MATCHES "Debug") OR (${CMAKE_BUILD_TYPE} MATCHES "RelWithDebInfo" ))
+		
 			option(ENEABLE_SANITIZER "Use sanitizer in Debug and RelWithDebInfo build type" TRUE)
 			if (ENEABLE_SANITIZER)
 				if (MSVC)
@@ -27,7 +25,7 @@ function (set_sanitizer)
 				endif (MSVC)
 			endif (ENEABLE_SANITIZER)
 
-		endif (BUILD_DEBUG)
+		endif ()
 	else ()
 		list (APPEND CMAKE_EXE_LINKER_FLAGS -fstack-protector -lssp)
 	endif (NOT MINGW)
@@ -37,13 +35,12 @@ endfunction (set_sanitizer)
 function(set_target_warnings target)
     option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" TRUE)
     
-	if (NOT MINGW)
-		set(BUILD_DEBUG (${CMAKE_BUILD_TYPE} MATCHES "Debug") OR (${CMAKE_BUILD_TYPE} MATCHES "RelWithDebInfo" ) ) 
-		
-		if (BUILD_DEBUG)		
+	if (NOT MINGW)		
+		if ((${CMAKE_BUILD_TYPE} MATCHES "Debug") OR (${CMAKE_BUILD_TYPE} MATCHES "RelWithDebInfo" ))
+			
 			option(ENEABLE_SANITIZER "Use sanitizer in Debug and RelWithDebInfo build type" TRUE)
-
 			if (ENEABLE_SANITIZER)
+				message(STATUS "Sanitizer active ${BUILD_DEBUG}")
 				if (NOT MSVC)
 
 					set(SANITIZE 
@@ -63,7 +60,9 @@ function(set_target_warnings target)
 				set (FORTIFY -D_FORTIFY_SOURCE=2 -fstack-protector-strong -fstack-clash-protection -fPIE)
 				set (CMAKE_C_FLAGS_DEBUG "-g -O2" CACHE INTERNAL "debug flags")
 			endif (ENEABLE_SANITIZER)
-		endif (BUILD_DEBUG)
+		else()
+			set(SANITIZE "")
+		endif ()
 	endif (NOT MINGW)
 
     set (GCC_WARNINGS
