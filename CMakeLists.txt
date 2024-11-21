@@ -5,8 +5,8 @@ project (forward_list LANGUAGES C VERSION 2.0)
 #include(CTest)
 #enable_testing()
 
-include(${CMAKE_SOURCE_DIR}/cmake/option.cmake)
-include(${CMAKE_SOURCE_DIR}/cmake/CompilerWarnings.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/option.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CompilerWarnings.cmake)
 
 set_choice (CMAKE_BUILD_TYPE "Debug;Release;MinSizeRel;RelWithDebInfo" "Debug" "Choose type of build")
 
@@ -20,17 +20,17 @@ set (HEADERS
 
 set_sanitizer()
 
-option(BUILD_TEST "Build exemple" ON)
-if (BUILD_TEST)
-    add_subdirectory(${CMAKE_SOURCE_DIR}/test)
+option(BUILD_${PROJECT_NAME}_TEST "Build exemple" ON)
+if (BUILD_${PROJECT_NAME}_TEST)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/test)
 endif()
 
-option(BUILD_DOC "Build documentation" ON)
-if (BUILD_DOC)
-    add_subdirectory(${CMAKE_SOURCE_DIR}/docs)
+option(BUILD_${PROJECT_NAME}_DOC "Build documentation" ON)
+if (BUILD_${PROJECT_NAME}_DOC)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/docs)
 endif()
 
-include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 set (CMAKE_C_STANDARD 17)
 set (CMAKE_C_STANDARD_REQUIRED ON)
@@ -55,9 +55,9 @@ SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "quentin.horgues@outlook.fr")
 SET(CPACK_PACKAGE_VERSION_MAJOR "2")
 SET(CPACK_PACKAGE_VERSION_MINOR "0")
 SET(CPACK_PACKAGE_VERSION_PATCH "0")
-SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/README.md")
-SET(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
-SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
+SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+SET(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6")
 SET(CPACK_PACKAGE_VENDOR "Quentin Horgues")
     
